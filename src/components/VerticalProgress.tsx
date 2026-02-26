@@ -43,11 +43,9 @@ const VerticalProgress = () => {
           <div className="flex items-start gap-4">
             <div className="flex flex-col items-center">
               {statusIcon(step.status)}
-              {i < steps.length - 1 && (
+          {i < steps.length - 1 && (
                 <div
-                  className={`w-0.5 ${
-                    step.status === "in-progress" ? "h-6" : "h-10"
-                  } ${step.status === "done" ? "bg-primary" : "bg-muted"}`}
+                  className={`w-0.5 flex-1 min-h-[2.5rem] ${step.status === "done" ? "bg-primary" : "bg-muted"}`}
                 />
               )}
             </div>
@@ -78,14 +76,8 @@ const VerticalProgress = () => {
 
           {/* Streaming results preview beneath step 2 */}
           {step.status === "in-progress" && (
-            <div className="flex items-start gap-4">
-              <div className="flex flex-col items-center">
-                <div className="w-8 shrink-0" />
-                {i < steps.length - 1 && (
-                  <div className="w-0.5 h-full bg-muted" />
-                )}
-              </div>
-              <div className="w-full max-w-sm animate-in fade-in duration-700 pb-3">
+            <div className="pl-12 pb-3">
+              <div className="w-full max-w-sm animate-in fade-in duration-700">
                 {/* Skeleton result card — data streaming in */}
                 <div className="rounded-lg bg-card/60 backdrop-blur-sm p-4 space-y-3">
                   <div className="flex items-center gap-2">
