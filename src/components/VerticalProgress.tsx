@@ -1,4 +1,5 @@
 import { Check, Loader2, Lock } from "lucide-react";
+import InsightCard from "./InsightCard";
 
 interface Step {
   label: string;
@@ -38,42 +39,60 @@ const VerticalProgress = () => {
   return (
     <div className="flex flex-col">
       {steps.map((step, i) => (
-        <div key={step.label} className="flex items-start gap-4">
-          {/* Icon + connector line */}
-          <div className="flex flex-col items-center">
-            {statusIcon(step.status)}
-            {i < steps.length - 1 && (
-              <div
-                className={`w-0.5 h-10 ${
-                  step.status === "done" ? "bg-primary" : "bg-muted"
+        <div key={step.label}>
+          <div className="flex items-start gap-4">
+            {/* Icon + connector line */}
+            <div className="flex flex-col items-center">
+              {statusIcon(step.status)}
+              {i < steps.length - 1 && (
+                <div
+                  className={`w-0.5 ${step.status === "in-progress" ? "h-4" : "h-10"} ${
+                    step.status === "done" ? "bg-primary" : "bg-muted"
+                  }`}
+                />
+              )}
+            </div>
+
+            {/* Text */}
+            <div className="pt-1">
+              <p
+                className={`text-sm font-semibold uppercase tracking-wide ${
+                  step.status === "done"
+                    ? "text-primary"
+                    : step.status === "in-progress"
+                    ? "text-foreground"
+                    : "text-muted-foreground"
                 }`}
-              />
-            )}
+              >
+                Step {i + 1}
+              </p>
+              <p
+                className={`text-[15px] leading-relaxed ${
+                  step.status === "not-done"
+                    ? "text-muted-foreground"
+                    : "text-card-foreground"
+                }`}
+              >
+                {step.label}
+              </p>
+            </div>
           </div>
 
-          {/* Text */}
-          <div className="pt-1">
-            <p
-              className={`text-sm font-semibold uppercase tracking-wide ${
-                step.status === "done"
-                  ? "text-primary"
-                  : step.status === "in-progress"
-                  ? "text-foreground"
-                  : "text-muted-foreground"
-              }`}
-            >
-              Step {i + 1}
-            </p>
-            <p
-              className={`text-[15px] leading-relaxed ${
-                step.status === "not-done"
-                  ? "text-muted-foreground"
-                  : "text-card-foreground"
-              }`}
-            >
-              {step.label}
-            </p>
-          </div>
+          {/* Inline insight card below step 2 */}
+          {step.status === "in-progress" && (
+            <div className="ml-12 my-3">
+              <InsightCard
+                emoji="🌊"
+                title="What motivates you"
+                description="In every trade-off question, you chose impact over income. Your matches skew toward mission-driven roles."
+                active
+              />
+              {/* Connector line continues after card */}
+              <div className="flex justify-start -ml-8">
+                <div className="w-0.5 h-6 bg-muted ml-[12px]" />
+              </div>
+            </div>
+          )}
         </div>
       ))}
     </div>
