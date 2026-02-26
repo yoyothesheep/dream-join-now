@@ -45,9 +45,9 @@ const VerticalProgress = () => {
               {statusIcon(step.status)}
               {i < steps.length - 1 && (
                 <div
-                  className={`w-0.5 ${
-                    step.status === "in-progress" ? "h-6" : "h-10"
-                  } ${step.status === "done" ? "bg-primary" : "bg-muted"}`}
+                  className={`w-0.5 h-10 ${
+                    step.status === "done" ? "bg-primary" : "bg-muted"
+                  }`}
                 />
               )}
             </div>
@@ -75,44 +75,41 @@ const VerticalProgress = () => {
               </p>
             </div>
           </div>
-
-          {/* Streaming results preview beneath step 2 */}
-          {step.status === "in-progress" && (
-            <div className="flex justify-center py-3">
-              <div className="w-full max-w-sm animate-in fade-in duration-700">
-                {/* Skeleton result card — data streaming in */}
-                <div className="rounded-lg bg-card/60 backdrop-blur-sm p-4 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Skeleton className="h-4 w-4 rounded-full" />
-                    <Skeleton className="h-3.5 w-28" />
-                  </div>
-                  <Skeleton className="h-3 w-full" />
-                  <Skeleton className="h-3 w-4/5" />
-
-                  {/* Partially "resolved" insight row */}
-                  <div className="pt-2 border-t border-border/40 mt-2 space-y-2 animate-in fade-in duration-1000 delay-500">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      <span className="mr-1">🌊</span>
-                      What motivates you
-                    </p>
-                    <p className="text-sm text-muted-foreground/80 leading-relaxed">
-                      You chose impact over income. Your matches skew toward
-                      mission-driven roles.
-                    </p>
-                  </div>
-
-                  {/* More skeleton rows still loading */}
-                  <div className="pt-2 border-t border-border/40 space-y-2">
-                    <Skeleton className="h-3 w-24" />
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-3 w-3/5" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       ))}
+
+      {/* Streaming results card — below the stepper */}
+      <div className="flex justify-center pt-6">
+        <div className="w-full max-w-sm animate-in fade-in duration-700">
+          <div className="rounded-lg bg-card/60 backdrop-blur-sm p-4 space-y-3">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-4 w-4 rounded-full" />
+              <Skeleton className="h-3.5 w-28" />
+            </div>
+            <Skeleton className="h-3 w-full" />
+            <Skeleton className="h-3 w-4/5" />
+
+            {/* Partially resolved insight */}
+            <div className="pt-2 border-t border-border/40 mt-2 space-y-2 animate-in fade-in duration-1000 delay-500">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <span className="mr-1">🌊</span>
+                What motivates you
+              </p>
+              <p className="text-sm text-muted-foreground/80 leading-relaxed">
+                You chose impact over income. Your matches skew toward
+                mission-driven roles.
+              </p>
+            </div>
+
+            {/* More skeleton rows still loading */}
+            <div className="pt-2 border-t border-border/40 space-y-2">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-3 w-full" />
+              <Skeleton className="h-3 w-3/5" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
