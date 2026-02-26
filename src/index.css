@@ -66,3 +66,23 @@
     font-family: var(--font-heading);
   }
 }
+
+@keyframes progress-fill {
+  0% { width: 0%; }
+  100% { width: var(--progress-target); }
+}
+
+@keyframes progress-creep {
+  0% { width: var(--progress-target); }
+  100% { width: calc(var(--progress-target) + 15%); }
+}
+
+@keyframes insight-in {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes insight-out {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-8px); }
+}
