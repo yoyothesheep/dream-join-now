@@ -1,5 +1,4 @@
 import { Check, Loader2, Lock } from "lucide-react";
-import InsightCard from "./InsightCard";
 
 interface Step {
   label: string;
@@ -46,9 +45,9 @@ const VerticalProgress = () => {
               {statusIcon(step.status)}
               {i < steps.length - 1 && (
                 <div
-                  className={`w-0.5 ${step.status === "in-progress" ? "h-4" : "h-10"} ${
-                    step.status === "done" ? "bg-primary" : "bg-muted"
-                  }`}
+                  className={`w-0.5 ${
+                    step.status === "in-progress" ? "h-6" : "h-10"
+                  } ${step.status === "done" ? "bg-primary" : "bg-muted"}`}
                 />
               )}
             </div>
@@ -78,18 +77,24 @@ const VerticalProgress = () => {
             </div>
           </div>
 
-          {/* Inline insight card below step 2 */}
+          {/* Inline insight beneath step 2 — flush with the timeline */}
           {step.status === "in-progress" && (
-            <div className="ml-12 my-3">
-              <InsightCard
-                emoji="🌊"
-                title="What motivates you"
-                description="In every trade-off question, you chose impact over income. Your matches skew toward mission-driven roles."
-                active
-              />
-              {/* Connector line continues after card */}
-              <div className="flex justify-start -ml-8">
-                <div className="w-0.5 h-6 bg-muted ml-[12px]" />
+            <div className="flex items-stretch gap-4">
+              {/* Continuing connector line */}
+              <div className="flex flex-col items-center">
+                <div className="w-0.5 flex-1 bg-muted" />
+              </div>
+
+              {/* Insight content — no card border, blends into the step */}
+              <div className="py-3 animate-in fade-in duration-700">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+                  <span className="mr-1">🌊</span>
+                  What motivates you
+                </p>
+                <p className="text-sm text-muted-foreground/80 leading-relaxed">
+                  In every trade-off question, you chose impact over income. Your
+                  matches skew toward mission-driven roles.
+                </p>
               </div>
             </div>
           )}
