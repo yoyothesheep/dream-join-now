@@ -1,44 +1,45 @@
-import ProgressBar from "@/components/ProgressBar";
+import VerticalProgress from "@/components/VerticalProgress";
 import InsightCard from "@/components/InsightCard";
-import CarouselDots from "@/components/CarouselDots";
-import CTACard from "@/components/CTACard";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background flex items-start justify-center px-4 py-16">
-      <div className="w-full max-w-2xl space-y-10">
+      <div className="w-full max-w-3xl space-y-10">
         {/* Header */}
         <div>
-          <p className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-3">
-            Analyzing your responses
-          </p>
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground leading-[1.1]">
-            FINDING CAREERS{" "}
-            <span className="text-primary">BUILT FOR YOU</span>
+            GENERATING YOUR{" "}
+            <span className="text-primary">PERSONALIZED CAREER PACKAGE</span>
           </h1>
         </div>
 
-        {/* Progress */}
-        <ProgressBar value={50} />
+        {/* Main content: timeline + insight card side by side */}
+        <div className="flex flex-col md:flex-row gap-8 items-start">
+          {/* Left: Vertical progress + CTA */}
+          <div className="flex-1 space-y-8">
+            <div className="rounded-2xl border bg-card p-8 shadow-sm">
+              <VerticalProgress />
+            </div>
 
-        {/* Insights */}
-        <div className="space-y-4">
-          <p className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground text-center">
-            While we work — a peek at what we found
-          </p>
+            <button className="w-full rounded-xl bg-primary text-primary-foreground font-semibold text-base py-4 hover:opacity-90 transition-opacity tracking-wide uppercase">
+              Create your free account now
+            </button>
 
-          <InsightCard
-            emoji="🌊"
-            title="What motivates you"
-            description="In every trade-off question, you chose impact over income. Your matches skew toward mission-driven roles."
-            active
-          />
+            <p className="text-center text-xs text-muted-foreground leading-relaxed">
+              Free. No paywalls. We never sell your data.
+            </p>
+          </div>
 
-          <CarouselDots total={5} active={0} />
+          {/* Right: Insight card */}
+          <div className="flex-1">
+            <InsightCard
+              emoji="🌊"
+              title="What motivates you"
+              description="In every trade-off question, you chose impact over income. Your matches skew toward mission-driven roles."
+              active
+            />
+          </div>
         </div>
-
-        {/* Combined CTA */}
-        <CTACard />
       </div>
     </div>
   );
