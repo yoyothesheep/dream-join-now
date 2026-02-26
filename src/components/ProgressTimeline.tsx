@@ -1,4 +1,5 @@
 import { Check, Loader2, Lock } from "lucide-react";
+import climbingGraphic from "@/assets/climbing-graphic.png";
 
 interface Step {
   label: string;
@@ -50,7 +51,14 @@ const statusIcon = (status: Step["status"]) => {
 const ProgressTimeline = () => {
   return (
     <div className="rounded-2xl border bg-card p-8 shadow-sm">
-      <div className="space-y-0">
+      <div className="flex items-center gap-6">
+        {/* Motivation graphic */}
+        <div className="hidden sm:block shrink-0">
+          <img src={climbingGraphic} alt="Person climbing steps" className="w-36 h-36 object-contain" />
+        </div>
+
+        {/* Timeline */}
+        <div className="flex-1 space-y-0">
         {steps.map((step, i) => (
           <div key={i} className="flex gap-4">
             {/* Icon + connector line */}
@@ -76,6 +84,7 @@ const ProgressTimeline = () => {
             </div>
           </div>
         ))}
+        </div>
       </div>
     </div>
   );
