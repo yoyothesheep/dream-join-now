@@ -39,18 +39,19 @@ const VerticalProgress = () => {
   return (
     <div className="flex flex-col">
       {steps.map((step, i) => (
-        <div key={step.label}>
-          <div className="flex items-start gap-4">
+        <div key={step.label} className="flex items-stretch gap-4">
+            {/* Icon column with connector */}
             <div className="flex flex-col items-center">
               {statusIcon(step.status)}
-          {i < steps.length - 1 && (
+              {i < steps.length - 1 && (
                 <div
-                  className={`w-0.5 flex-1 min-h-[2.5rem] ${step.status === "done" ? "bg-primary" : "bg-muted"}`}
+                  className={`w-0.5 flex-1 ${step.status === "done" ? "bg-primary" : "bg-muted"}`}
                 />
               )}
             </div>
 
-            <div className="pt-1">
+            {/* Content column */}
+            <div className="pt-1 pb-4 flex-1 min-w-0">
               <p
                 className={`text-sm font-semibold uppercase tracking-wide ${
                   step.status === "done"
@@ -71,45 +72,39 @@ const VerticalProgress = () => {
               >
                 {step.label}
               </p>
-            </div>
-          </div>
 
-          {/* Streaming results preview beneath step 2 */}
-          {step.status === "in-progress" && (
-            <div className="pl-12 pb-3">
-              <div className="w-full max-w-sm animate-in fade-in duration-700">
-                {/* Skeleton result card — data streaming in */}
-                <div className="rounded-lg bg-card/60 backdrop-blur-sm p-4 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Skeleton className="h-4 w-4 rounded-full" />
-                    <Skeleton className="h-3.5 w-28" />
-                  </div>
-                  <Skeleton className="h-3 w-full" />
-                  <Skeleton className="h-3 w-4/5" />
-
-                  {/* Partially "resolved" insight row */}
-                  <div className="pt-2 border-t border-border/40 mt-2 space-y-2 animate-in fade-in duration-1000 delay-500">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      <span className="mr-1">🌊</span>
-                      What motivates you
-                    </p>
-                    <p className="text-sm text-muted-foreground/80 leading-relaxed">
-                      You chose impact over income. Your matches skew toward
-                      mission-driven roles.
-                    </p>
-                  </div>
-
-                  {/* More skeleton rows still loading */}
-                  <div className="pt-2 border-t border-border/40 space-y-2">
-                    <Skeleton className="h-3 w-24" />
+              {/* Streaming results preview beneath step 2 */}
+              {step.status === "in-progress" && (
+                <div className="mt-3 w-full max-w-sm animate-in fade-in duration-700">
+                  <div className="rounded-lg bg-card/60 backdrop-blur-sm p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-4 w-4 rounded-full" />
+                      <Skeleton className="h-3.5 w-28" />
+                    </div>
                     <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-3 w-3/5" />
+                    <Skeleton className="h-3 w-4/5" />
+
+                    <div className="pt-2 border-t border-border/40 mt-2 space-y-2 animate-in fade-in duration-1000 delay-500">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        <span className="mr-1">🌊</span>
+                        What motivates you
+                      </p>
+                      <p className="text-sm text-muted-foreground/80 leading-relaxed">
+                        You chose impact over income. Your matches skew toward
+                        mission-driven roles.
+                      </p>
+                    </div>
+
+                    <div className="pt-2 border-t border-border/40 space-y-2">
+                      <Skeleton className="h-3 w-24" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-3/5" />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
-          )}
-        </div>
+          </div>
       ))}
     </div>
   );
