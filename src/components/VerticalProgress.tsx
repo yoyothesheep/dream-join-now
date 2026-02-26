@@ -87,7 +87,7 @@ const VerticalProgress = () => {
               </div>
               <div className="w-full max-w-sm animate-in fade-in duration-700 pb-3">
                 {/* Skeleton result card — data streaming in */}
-                <div className="rounded-lg bg-muted p-4 space-y-3 border border-border">
+                <div className="rounded-lg bg-card/60 backdrop-blur-sm p-4 space-y-3">
                   <div className="flex items-center gap-2">
                     <Skeleton className="h-4 w-4 rounded-full" />
                     <Skeleton className="h-3.5 w-28" />
