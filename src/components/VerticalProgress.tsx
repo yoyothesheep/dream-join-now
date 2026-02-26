@@ -7,10 +7,14 @@ interface Step {
 }
 
 const steps: Step[] = [
-  { label: "Career quiz", status: "done" },
-  { label: "Generating your career package", status: "in-progress" },
-  { label: "Sign up and qualify for financial support", status: "not-done" },
+  { label: "Tell us what matters", status: "done" },
+  { label: "Get personalized matches", status: "in-progress" },
+  { label: "Make a plan", status: "not-done" },
 ];
+
+const stepSubtitles: Record<number, string> = {
+  2: "Training and financial support options",
+};
 
 const statusIcon = (status: Step["status"]) => {
   switch (status) {
@@ -72,6 +76,11 @@ const VerticalProgress = () => {
               >
                 {step.label}
               </p>
+              {stepSubtitles[i] && (
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {stepSubtitles[i]}
+                </p>
+              )}
 
               {/* Streaming results preview beneath step 2 */}
               {step.status === "in-progress" && (
