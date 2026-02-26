@@ -78,8 +78,8 @@ const VerticalProgress = () => {
 
           {/* Streaming results preview beneath step 2 */}
           {step.status === "in-progress" && (
-            <div className="flex justify-center py-3 -z-10 relative">
-              <div className="w-full max-w-[280px] animate-in fade-in duration-700">
+            <div className="flex justify-center py-3">
+              <div className="w-full max-w-sm animate-in fade-in duration-700">
                 {/* Skeleton result card — data streaming in */}
                 <div className="rounded-lg bg-card/60 backdrop-blur-sm p-4 space-y-3">
                   <div className="flex items-center gap-2">
