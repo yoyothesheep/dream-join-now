@@ -1,18 +1,30 @@
+import { Box, LinearProgress, Typography } from "@mui/material";
+
 const ProgressBar = ({ value = 50 }: { value?: number }) => {
   return (
-    <div className="flex items-center gap-3">
-      <div className="flex-1 h-2.5 rounded-full bg-muted overflow-hidden">
-        <div
-          className="h-full rounded-full transition-all duration-1000 ease-out"
-          style={{
-            width: `${value}%`,
-            background: 'var(--gradient-progress)',
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+      <Box sx={{ flex: 1 }}>
+        <LinearProgress
+          variant="determinate"
+          value={value}
+          sx={{
+            height: 10,
+            borderRadius: 5,
+            bgcolor: "action.disabledBackground",
+            "& .MuiLinearProgress-bar": {
+              borderRadius: 5,
+              background: "var(--gradient-progress, linear-gradient(90deg, #9237ED 0%, #C489FF 100%))",
+              transition: "transform 1s ease-out",
+            },
           }}
         />
-      </div>
-      <span className="text-sm font-medium text-muted-foreground">{value}%</span>
-    </div>
+      </Box>
+      <Typography variant="body2" sx={{ fontWeight: 500, color: "text.secondary", minWidth: 35 }}>
+        {value}%
+      </Typography>
+    </Box>
   );
 };
 
 export default ProgressBar;
+

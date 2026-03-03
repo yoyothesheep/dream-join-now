@@ -1,3 +1,5 @@
+import { Paper, Typography, Box } from "@mui/material";
+
 interface InsightCardProps {
   emoji: string;
   title: string;
@@ -7,18 +9,41 @@ interface InsightCardProps {
 
 const InsightCard = ({ emoji, title, description, active = false }: InsightCardProps) => {
   return (
-    <div
-      className={`rounded-xl border bg-card p-6 transition-all ${
-        active ? 'border-l-4 border-l-primary shadow-md' : 'border-border opacity-50 scale-95'
-      }`}
+    <Paper
+      elevation={active ? 3 : 0}
+      sx={{
+        p: 3,
+        border: "1px solid",
+        borderColor: active ? "primary.main" : "divider",
+        borderLeftWidth: active ? 4 : 1,
+        transition: "all 0.3s ease",
+        opacity: active ? 1 : 0.5,
+        transform: active ? "scale(1)" : "scale(0.95)",
+      }}
     >
-      <h3 className="text-sm font-semibold tracking-wide uppercase mb-2 text-card-foreground">
-        <span className="mr-1.5">{emoji}</span>
+      <Typography
+        variant="subtitle2"
+        sx={{
+          fontWeight: 600,
+          letterSpacing: 0.5,
+          textTransform: "uppercase",
+          mb: 1,
+          color: "text.primary",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <Box component="span" sx={{ mr: 1 }}>
+          {emoji}
+        </Box>
         {title}
-      </h3>
-      <p className="text-muted-foreground text-[15px] leading-relaxed">{description}</p>
-    </div>
+      </Typography>
+      <Typography variant="body2" sx={{ color: "text.secondary", fontSize: "15px", lineHeight: 1.6 }}>
+        {description}
+      </Typography>
+    </Paper>
   );
 };
 
 export default InsightCard;
+

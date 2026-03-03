@@ -1,5 +1,7 @@
-import { Check, Loader2, Lock } from "lucide-react";
-import { Skeleton } from "./ui/skeleton";
+import { Box, Typography, Skeleton } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
+import CircularProgress from "@mui/material/CircularProgress";
+import LockIcon from "@mui/icons-material/Lock";
 
 interface Step {
   label: string;
@@ -20,102 +22,156 @@ const statusIcon = (status: Step["status"]) => {
   switch (status) {
     case "done":
       return (
-        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0">
-          <Check className="w-4 h-4 text-primary-foreground" />
-        </div>
+        <Box
+          sx={{
+            width: 32,
+            height: 32,
+            borderRadius: "50%",
+            bgcolor: "primary.main",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+          }}
+        >
+          <CheckIcon sx={{ width: 16, height: 16, color: "primary.contrastText" }} />
+        </Box>
       );
     case "in-progress":
       return (
-        <div className="w-8 h-8 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center shrink-0">
-          <Loader2 className="w-4 h-4 text-primary animate-spin" />
-        </div>
+        <Box
+          sx={{
+            width: 32,
+            height: 32,
+            borderRadius: "50%",
+            bgcolor: "rgba(146, 55, 237, 0.2)", // primary/20
+            border: "2px solid",
+            borderColor: "primary.main",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+          }}
+        >
+          <CircularProgress size={16} sx={{ color: "primary.main" }} />
+        </Box>
       );
     case "not-done":
       return (
-        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-          <Lock className="w-3.5 h-3.5 text-muted-foreground" />
-        </div>
+        <Box
+          sx={{
+            width: 32,
+            height: 32,
+            borderRadius: "50%",
+            bgcolor: "action.disabledBackground",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+          }}
+        >
+          <LockIcon sx={{ width: 14, height: 14, color: "text.disabled" }} />
+        </Box>
       );
   }
 };
 
 const VerticalProgress = () => {
   return (
-    <div className="flex flex-col">
+    <Box sx={{ display: "flex", flexDirection: "column" }}>
       {steps.map((step, i) => (
-        <div key={step.label} className="flex items-stretch gap-4">
-            {/* Icon column with connector */}
-            <div className="flex flex-col items-center">
-              {statusIcon(step.status)}
-              {i < steps.length - 1 && (
-                <div
-                  className={`w-0.5 flex-1 ${step.status === "done" ? "bg-primary" : "bg-muted"}`}
-                />
-              )}
-            </div>
+        <Box key={step.label} sx={{ display: "flex", alignItems: "stretch", gap: 2 }}>
+          {/* Icon column with connector */}
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            {statusIcon(step.status)}
+            {i < steps.length - 1 && (
+              <Box
+                sx={{
+                  width: 2,
+                  flexGrow: 1,
+                  bgcolor: step.status === "done" ? "primary.main" : "divider",
+                }}
+              />
+            )}
+          </Box>
 
-            {/* Content column */}
-            <div className="pt-1 pb-4 flex-1 min-w-0">
-              <p
-                className={`text-sm font-semibold uppercase tracking-wide ${
+          {/* Content column */}
+          <Box sx={{ pt: 0.5, pb: 2, flex: 1, minWidth: 0 }}>
+            <Typography
+              variant="overline"
+              sx={{
+                fontWeight: 600,
+                color:
                   step.status === "done"
-                    ? "text-primary"
+                    ? "primary.main"
                     : step.status === "in-progress"
-                    ? "text-foreground"
-                    : "text-muted-foreground"
-                }`}
-              >
-                Step {i + 1}
-              </p>
-              <p
-                className={`text-[15px] leading-relaxed ${
-                  step.status === "not-done"
-                    ? "text-muted-foreground"
-                    : "text-card-foreground"
-                }`}
-              >
-                {step.label}
-              </p>
-              {stepSubtitles[i] && (
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {stepSubtitles[i]}
-                </p>
-              )}
+                      ? "text.primary"
+                      : "text.disabled",
+              }}
+            >
+              Step {i + 1}
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{
+                fontSize: "15px",
+                lineHeight: 1.6,
+                color: step.status === "not-done" ? "text.disabled" : "text.primary",
+              }}
+            >
+              {step.label}
+            </Typography>
+            {stepSubtitles[i] && (
+              <Typography variant="caption" sx={{ color: "text.secondary", mt: 0.5 }}>
+                {stepSubtitles[i]}
+              </Typography>
+            )}
 
-              {/* Streaming results preview beneath step 2 */}
-              {step.status === "in-progress" && (
-                <div className="mt-3 w-full max-w-sm animate-in fade-in duration-700">
-                  <div className="rounded-lg bg-card/60 backdrop-blur-sm p-4 space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Skeleton className="h-4 w-4 rounded-full" />
-                      <Skeleton className="h-3.5 w-28" />
-                    </div>
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-3 w-4/5" />
+            {/* Streaming results preview beneath step 2 */}
+            {step.status === "in-progress" && (
+              <Box sx={{ mt: 1.5, width: "100%", maxWidth: 384 }}>
+                <Box
+                  sx={{
+                    borderRadius: 2,
+                    bgcolor: "background.paper",
+                    p: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 1.5,
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Skeleton variant="circular" width={16} height={16} />
+                    <Skeleton variant="text" width={112} height={14} />
+                  </Box>
+                  <Skeleton variant="text" width="100%" height={12} />
+                  <Skeleton variant="text" width="80%" height={12} />
 
-                    <div className="pt-2 border-t border-border/40 mt-2 space-y-2 animate-in fade-in duration-1000 delay-500">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                        <span className="mr-1">🌊</span>
-                        What motivates you
-                      </p>
-                      <p className="text-sm text-muted-foreground/80 leading-relaxed">
-                        You chose impact over income. Your matches skew toward
-                        mission-driven roles.
-                      </p>
-                    </div>
+                  <Box sx={{ pt: 1, borderTop: 1, borderColor: "divider", mt: 1 }}>
+                    <Typography
+                      variant="overline"
+                      sx={{ fontWeight: 600, color: "text.secondary", display: "block", mb: 0.5 }}
+                    >
+                      <span style={{ marginRight: 4 }}>🌊</span>
+                      What motivates you
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.6 }}>
+                      You chose impact over income. Your matches skew toward mission-driven roles.
+                    </Typography>
+                  </Box>
 
-                    <div className="pt-2 border-t border-border/40 space-y-2">
-                      <Skeleton className="h-3 w-24" />
-                      <Skeleton className="h-3 w-full" />
-                      <Skeleton className="h-3 w-3/5" />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+                  <Box sx={{ pt: 1, borderTop: 1, borderColor: "divider", display: "flex", flexDirection: "column", gap: 1 }}>
+                    <Skeleton variant="text" width={96} height={12} />
+                    <Skeleton variant="text" width="100%" height={12} />
+                    <Skeleton variant="text" width="60%" height={12} />
+                  </Box>
+                </Box>
+              </Box>
+            )}
+          </Box>
+        </Box>
       ))}
-    </div>
+    </Box>
   );
 };
 

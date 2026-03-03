@@ -1,18 +1,32 @@
+import { Box } from "@mui/material";
+
 const CarouselDots = ({ total = 5, active = 0 }: { total?: number; active?: number }) => {
   return (
-    <div className="flex items-center justify-center gap-2">
+    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1 }}>
       {Array.from({ length: total }).map((_, i) => (
-        <div
+        <Box
           key={i}
-          className={`rounded-full transition-all ${
-            i === active
-              ? 'w-2.5 h-2.5 bg-primary'
-              : 'w-2 h-2 bg-muted-foreground/30'
-          }`}
+          sx={{
+            borderRadius: "50%",
+            transition: "all 0.3s ease",
+            ...(i === active
+              ? {
+                width: 10,
+                height: 10,
+                bgcolor: "primary.main",
+              }
+              : {
+                width: 8,
+                height: 8,
+                bgcolor: "text.disabled",
+                opacity: 0.5,
+              }),
+          }}
         />
       ))}
-    </div>
+    </Box>
   );
 };
 
 export default CarouselDots;
+

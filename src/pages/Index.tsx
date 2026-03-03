@@ -1,34 +1,104 @@
 import VerticalProgress from "@/components/VerticalProgress";
+import { Box, Typography, Button } from "@mui/material";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background flex items-start justify-center px-4 py-16">
-      <div className="w-full max-w-3xl space-y-10">
+    <Box
+      sx={{
+        position: "relative",
+        minHeight: "100vh",
+        bgcolor: "background.default",
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "center",
+        px: 2,
+        py: 8,
+        overflow: "hidden",
+      }}
+    >
+      {/* Mesh gradient orbs — purple top-left, mint bottom-right */}
+      <Box
+        aria-hidden="true"
+        sx={{
+          pointerEvents: "none",
+          position: "absolute",
+          top: -128,
+          left: -128,
+          width: 600,
+          height: 600,
+          borderRadius: "50%",
+          background: "rgba(220, 185, 254, 0.50)", // purple 100
+          filter: "blur(80px)",
+        }}
+      />
+      <Box
+        aria-hidden="true"
+        sx={{
+          pointerEvents: "none",
+          position: "absolute",
+          bottom: -128,
+          right: -128,
+          width: 500,
+          height: 500,
+          borderRadius: "50%",
+          background: "rgba(187, 247, 208, 0.55)", // green ~100 with opacity
+          filter: "blur(80px)",
+        }}
+      />
+
+      <Box sx={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 768, display: "flex", flexDirection: "column", gap: 5 }}>
         {/* Header */}
-        <div>
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground leading-[1.1]">
+        <Box>
+          <Typography variant="h2" sx={{ color: "text.primary" }}>
             GENERATING YOUR{" "}
-            <span className="text-primary">PERSONALIZED CAREER PACKAGE</span>
-          </h1>
-        </div>
+            <Box component="span" sx={{ color: "primary.main" }}>
+              PERSONALIZED CAREER PACKAGE
+            </Box>
+          </Typography>
+        </Box>
 
         {/* Main content: single column */}
-        <div className="space-y-8">
-          <div className="rounded-2xl border bg-card p-8 shadow-sm">
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <Box
+            sx={{
+              borderRadius: 4,
+              border: "1px solid",
+              borderColor: "divider",
+              bgcolor: "background.paper",
+              p: 4,
+              boxShadow: 1,
+            }}
+          >
             <VerticalProgress />
-          </div>
+          </Box>
 
-          <button className="w-full rounded-xl bg-primary text-primary-foreground font-semibold text-base py-4 hover:opacity-90 transition-opacity tracking-wide uppercase">
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{
+              py: 2,
+              fontWeight: 600,
+              fontSize: "1rem",
+              textTransform: "uppercase",
+              letterSpacing: 0.5,
+              borderRadius: 3,
+            }}
+          >
             Create your free account now
-          </button>
+          </Button>
 
-          <p className="text-center text-xs text-muted-foreground leading-relaxed">
+          <Typography
+            variant="caption"
+            sx={{ display: "block", textAlign: "center", color: "text.secondary", lineHeight: 1.6 }}
+          >
             Free. No paywalls. We never sell your data.
-          </p>
-        </div>
-      </div>
-    </div>
+          </Typography>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
 export default Index;
+
