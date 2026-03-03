@@ -162,7 +162,7 @@ const FindingCareers = () => {
             }}
           >
             <ThinkingLogo isThinking={!isDone} />
-            <Typography variant="body2" sx={{ flex: 1, color: "text.primary", fontWeight: 500 }}>
+            <Typography variant="body2" sx={{ flex: 1, color: "text.secondary", fontWeight: 400 }}>
               {headerLabel}
             </Typography>
           </Box>
