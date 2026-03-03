@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Box,
   Typography,
@@ -13,7 +13,8 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import CloseIcon from "@mui/icons-material/Close";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -71,13 +72,44 @@ const CAREERS = [
 
 const TOTAL = 25;
 
-const MobileCareerCard = ({ career }: { career: (typeof CAREERS)[0] }) => {
+const MobileCareerCard = ({
+  career,
+  onNext,
+  onPrev,
+}: {
+  career: (typeof CAREERS)[0];
+  onNext: () => void;
+  onPrev: () => void;
+}) => {
   const [readMore, setReadMore] = useState(false);
   const [videoExpanded, setVideoExpanded] = useState(false);
+  const [dragX, setDragX] = useState(0);
+  const startX = useRef(0);
+  const THRESHOLD = 80;
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    startX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setDragX(e.touches[0].clientX - startX.current);
+  };
+
+  const handleTouchEnd = () => {
+    if (dragX < -THRESHOLD) onNext();
+    else if (dragX > THRESHOLD) onPrev();
+    setDragX(0);
+  };
+
+  const arrowOpacity = Math.min(Math.abs(dragX) / THRESHOLD, 1);
 
   return (
     <Box
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       sx={{
+        position: "relative",
         flexShrink: 0,
         width: 327,
         bgcolor: "background.paper",
@@ -89,9 +121,41 @@ const MobileCareerCard = ({ career }: { career: (typeof CAREERS)[0] }) => {
         display: "flex",
         flexDirection: "column",
         gap: 2.25,
-        scrollSnapAlign: "start",
+        touchAction: "pan-y",
+        userSelect: "none",
+        transform: `translateX(${dragX}px) rotate(${dragX * 0.02}deg)`,
+        transition: dragX !== 0 ? "none" : "transform 0.3s ease",
       }}
     >
+      {/* Prev arrow */}
+      <Box
+        sx={{
+          position: "absolute",
+          left: 12,
+          top: "50%",
+          transform: "translateY(-50%)",
+          opacity: dragX > 0 ? arrowOpacity : 0,
+          pointerEvents: "none",
+          zIndex: 10,
+        }}
+      >
+        <ChevronLeftIcon sx={{ fontSize: 36, color: "text.secondary" }} />
+      </Box>
+
+      {/* Next arrow */}
+      <Box
+        sx={{
+          position: "absolute",
+          right: 12,
+          top: "50%",
+          transform: "translateY(-50%)",
+          opacity: dragX < 0 ? arrowOpacity : 0,
+          pointerEvents: "none",
+          zIndex: 10,
+        }}
+      >
+        <ChevronRightIcon sx={{ fontSize: 36, color: "text.secondary" }} />
+      </Box>
       {/* Badge + title + salary chips */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         <Chip
@@ -219,13 +283,26 @@ const MobileCareerCard = ({ career }: { career: (typeof CAREERS)[0] }) => {
   );
 };
 
+type CardStatus = "saved" | "dismissed" | null;
+
 const MatchMeResults = () => {
   const [currentCard, setCurrentCard] = useState(0);
+  const [mobileCardIndex, setMobileCardIndex] = useState(0);
+  const [cardStatuses, setCardStatuses] = useState<Record<number, CardStatus>>({});
   const [headerCollapsed, setHeaderCollapsed] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const career = CAREERS[currentCard % CAREERS.length];
   const progress = ((currentCard + 1) / TOTAL) * 100;
+
+  const desktopCareerIdx = currentCard % CAREERS.length;
+
+  const toggleStatus = (idx: number, action: "saved" | "dismissed") => {
+    setCardStatuses((s) => ({ ...s, [idx]: s[idx] === action ? null : action }));
+  };
+
+  const handleMobileNext = () => setMobileCardIndex((i) => Math.min(i + 1, CAREERS.length - 1));
+  const handleMobilePrev = () => setMobileCardIndex((i) => Math.max(i - 1, 0));
 
   useEffect(() => {
     if (!isMobile) return;
@@ -254,14 +331,15 @@ const MatchMeResults = () => {
             <Box sx={{ flex: "0 0 auto", p: 1 }}>
               <Typography variant="h6" sx={{ color: "text.primary" }}>altPath</Typography>
             </Box>
-            <Box sx={{ flex: 1, display: "flex", justifyContent: "center", gap: 0.5 }}>
+            <Box sx={{ flex: 1, display: "flex", justifyContent: "center", gap: 2 }}>
               {["Match Me Quiz", "Discover Careers", "Find Training", "altAid Funding"].map((label, i) => (
                 <Button
                   key={label}
                   variant="text"
-                  size="small"
                   sx={{
                     color: "text.secondary",
+                    px: "11px",
+                    py: "8px",
                     borderBottom: i === 2 ? "3px solid" : "none",
                     borderColor: "secondary.main",
                     borderRadius: i === 2 ? 0 : 1,
@@ -477,22 +555,24 @@ const MatchMeResults = () => {
               <Box sx={{ display: "flex", gap: 2 }}>
                 <Button
                   variant="contained"
-                  color="primary"
+                  color={cardStatuses[desktopCareerIdx] === "saved" ? "success" : "primary"}
                   fullWidth
-                  startIcon={<BookmarkBorderIcon />}
+                  startIcon={cardStatuses[desktopCareerIdx] === "saved" ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                  onClick={() => toggleStatus(desktopCareerIdx, "saved")}
                   sx={{ textTransform: "uppercase" }}
                 >
-                  Save
+                  {cardStatuses[desktopCareerIdx] === "saved" ? "Saved" : "Save"}
                 </Button>
                 <Button
                   variant="outlined"
                   fullWidth
                   startIcon={<CloseIcon />}
+                  onClick={() => toggleStatus(desktopCareerIdx, "dismissed")}
                   sx={{
                     textTransform: "uppercase",
-                    color: "#454771",
-                    borderColor: "rgba(35,37,85,0.5)",
-                    "&:hover": { borderColor: "#454771", bgcolor: "transparent" },
+                    color: cardStatuses[desktopCareerIdx] === "dismissed" ? "error.main" : "#454771",
+                    borderColor: cardStatuses[desktopCareerIdx] === "dismissed" ? "error.main" : "rgba(35,37,85,0.5)",
+                    "&:hover": { borderColor: cardStatuses[desktopCareerIdx] === "dismissed" ? "error.main" : "#454771", bgcolor: "transparent" },
                   }}
                 >
                   Not for me
@@ -563,26 +643,22 @@ const MatchMeResults = () => {
         </Box>
       </Box>
 
-      {/* ── Mobile Card Carousel ──────────────────────────────────────── */}
-      <Box sx={{ display: { xs: "block", md: "none" } }}>
-        <Box
-          sx={{
-            display: "flex",
-            gap: 1.5,
-            overflowX: "auto",
-            pl: 2,
-            pb: 2,
-            scrollSnapType: "x mandatory",
-            "&::-webkit-scrollbar": { display: "none" },
-            msOverflowStyle: "none",
-            scrollbarWidth: "none",
-          }}
-        >
-          {CAREERS.map((c, i) => (
-            <MobileCareerCard key={i} career={c} />
-          ))}
-          <Box sx={{ width: 32, flexShrink: 0 }} />
-        </Box>
+      {/* ── Mobile Card ───────────────────────────────────────────────── */}
+      <Box
+        sx={{
+          display: { xs: "flex", md: "none" },
+          justifyContent: "center",
+          px: 2,
+          py: 2,
+          overflow: "hidden",
+        }}
+      >
+        <MobileCareerCard
+          key={mobileCardIndex}
+          career={CAREERS[mobileCardIndex]}
+          onNext={handleMobileNext}
+          onPrev={handleMobilePrev}
+        />
       </Box>
 
       {/* ── "Explore Beyond" Section ──────────────────────────────────── */}
@@ -632,22 +708,24 @@ const MatchMeResults = () => {
       >
         <Button
           variant="contained"
-          color="primary"
+          color={cardStatuses[mobileCardIndex] === "saved" ? "success" : "primary"}
           fullWidth
-          startIcon={<BookmarkBorderIcon />}
+          startIcon={cardStatuses[mobileCardIndex] === "saved" ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+          onClick={() => toggleStatus(mobileCardIndex, "saved")}
           sx={{ textTransform: "uppercase" }}
         >
-          Save
+          {cardStatuses[mobileCardIndex] === "saved" ? "Saved" : "Save"}
         </Button>
         <Button
           variant="outlined"
           fullWidth
           startIcon={<CloseIcon />}
+          onClick={() => toggleStatus(mobileCardIndex, "dismissed")}
           sx={{
             textTransform: "uppercase",
-            color: "#454771",
-            borderColor: "rgba(35,37,85,0.5)",
-            "&:hover": { borderColor: "#454771", bgcolor: "transparent" },
+            color: cardStatuses[mobileCardIndex] === "dismissed" ? "error.main" : "#454771",
+            borderColor: cardStatuses[mobileCardIndex] === "dismissed" ? "error.main" : "rgba(35,37,85,0.5)",
+            "&:hover": { borderColor: cardStatuses[mobileCardIndex] === "dismissed" ? "error.main" : "#454771", bgcolor: "transparent" },
           }}
         >
           Not for me
