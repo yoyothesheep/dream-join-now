@@ -50,9 +50,9 @@ const Index = () => {
         {/* Header */}
         <Box>
           <Typography variant="h2" sx={{ color: "text.primary" }}>
-            GENERATING YOUR{" "}
+            FINDING CAREERS{" "}
             <Box component="span" sx={{ color: "primary.main" }}>
-              PERSONALIZED CAREER PACKAGE
+              BUILT FOR YOU
             </Box>
           </Typography>
         </Box>
