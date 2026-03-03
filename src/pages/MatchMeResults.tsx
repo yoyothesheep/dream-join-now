@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Box,
+  Collapse,
   Typography,
   Button,
   Chip,
@@ -74,44 +75,19 @@ const TOTAL = 25;
 
 const MobileCareerCard = ({
   career,
-  onNext,
-  onPrev,
 }: {
   career: (typeof CAREERS)[0];
-  onNext: () => void;
-  onPrev: () => void;
 }) => {
   const [readMore, setReadMore] = useState(false);
   const [videoExpanded, setVideoExpanded] = useState(false);
-  const [dragX, setDragX] = useState(0);
-  const startX = useRef(0);
-  const THRESHOLD = 80;
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    startX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setDragX(e.touches[0].clientX - startX.current);
-  };
-
-  const handleTouchEnd = () => {
-    if (dragX < -THRESHOLD) onNext();
-    else if (dragX > THRESHOLD) onPrev();
-    setDragX(0);
-  };
-
-  const arrowOpacity = Math.min(Math.abs(dragX) / THRESHOLD, 1);
 
   return (
     <Box
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
       sx={{
         position: "relative",
         flexShrink: 0,
-        width: 327,
+        width: "calc(100vw - 68px)",
+        maxWidth: 360,
         bgcolor: "background.paper",
         borderRadius: "16px",
         boxShadow:
@@ -121,41 +97,8 @@ const MobileCareerCard = ({
         display: "flex",
         flexDirection: "column",
         gap: 2.25,
-        touchAction: "pan-y",
-        userSelect: "none",
-        transform: `translateX(${dragX}px) rotate(${dragX * 0.02}deg)`,
-        transition: dragX !== 0 ? "none" : "transform 0.3s ease",
       }}
     >
-      {/* Prev arrow */}
-      <Box
-        sx={{
-          position: "absolute",
-          left: 12,
-          top: "50%",
-          transform: "translateY(-50%)",
-          opacity: dragX > 0 ? arrowOpacity : 0,
-          pointerEvents: "none",
-          zIndex: 10,
-        }}
-      >
-        <ChevronLeftIcon sx={{ fontSize: 36, color: "text.secondary" }} />
-      </Box>
-
-      {/* Next arrow */}
-      <Box
-        sx={{
-          position: "absolute",
-          right: 12,
-          top: "50%",
-          transform: "translateY(-50%)",
-          opacity: dragX < 0 ? arrowOpacity : 0,
-          pointerEvents: "none",
-          zIndex: 10,
-        }}
-      >
-        <ChevronRightIcon sx={{ fontSize: 36, color: "text.secondary" }} />
-      </Box>
       {/* Badge + title + salary chips */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         <Chip
@@ -233,16 +176,15 @@ const MobileCareerCard = ({
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
             <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M13.0457 3.58156C12.2006 3.58156 11.4221 3.2897 10.8064 2.80253C10.1042 2.24997 9.61441 1.45706 9.45194 0.548828H7.05469V10.9631C7.05469 12.0907 6.13984 13.0056 5.01227 13.0056C3.8847 13.0056 2.96984 12.0907 2.96984 10.9631C2.96984 9.83553 3.8847 8.92069 5.01227 8.92069C5.23422 8.92069 5.44781 8.95603 5.64797 9.01891V6.56634C5.44094 6.53969 5.22969 6.52444 5.01227 6.52444C2.56406 6.52444 0.572266 8.51591 0.572266 10.9641C0.572266 13.4123 2.56406 15.4041 5.01227 15.4041C7.46047 15.4041 9.45194 13.4123 9.45194 10.9641V5.66166C10.3697 6.33009 11.4952 6.72694 12.7127 6.72694H13.1875V4.33034C13.1402 4.33034 13.0916 4.33034 13.0457 3.58156Z" fill="#010101"/>
-              <path d="M12.7127 4.33034V6.72694C11.4952 6.72694 10.3697 6.33009 9.45194 5.66166V10.9641C9.45194 13.4123 7.46047 15.4041 5.01227 15.4041C2.56406 15.4041 0.572266 13.4123 0.572266 10.9641C0.572266 8.51591 2.56406 6.52444 5.01227 6.52444C5.22969 6.52444 5.44094 6.53969 5.64797 6.56634V9.01891C5.44781 8.95603 5.23422 8.92069 5.01227 8.92069C3.8847 8.92069 2.96984 9.83553 2.96984 10.9631C2.96984 12.0907 3.8847 13.0056 5.01227 13.0056C6.13984 13.0056 7.05469 12.0907 7.05469 10.9631V0.548828H9.45194C9.61441 1.45706 10.1042 2.24997 10.8064 2.80253C11.4221 3.2897 12.2006 3.58156 13.0457 3.58156L12.7127 4.33034Z" fill="#EE1D52"/>
-              <path d="M9.45194 5.66166C10.3697 6.33009 11.4952 6.72694 12.7127 6.72694V4.33034C12.0105 4.33034 11.3604 4.10969 10.8064 3.73691C10.1042 3.18434 9.61441 2.39144 9.45194 1.48319V0.548828H7.05469V10.9631C7.05469 12.0907 6.13984 13.0056 5.01227 13.0056C3.8847 13.0056 2.96984 12.0907 2.96984 10.9631C2.96984 9.83553 3.8847 8.92069 5.01227 8.92069C5.23422 8.92069 5.44781 8.95603 5.64797 9.01891V6.56634C5.44094 6.53969 5.22969 6.52444 5.01227 6.52444C2.56406 6.52444 0.572266 8.51591 0.572266 10.9641C0.572266 13.4123 2.56406 15.4041 5.01227 15.4041C7.46047 15.4041 9.45194 13.4123 9.45194 10.9641V5.66166Z" fill="#69C9D0"/>
+              <path d="M13.0457 3.58156C12.2006 3.58156 11.4221 3.2897 10.8064 2.80253C10.1042 2.24997 9.61441 1.45706 9.45194 0.548828H7.05469V10.9631C7.05469 12.0907 6.13984 13.0056 5.01227 13.0056C3.8847 13.0056 2.96984 12.0907 2.96984 10.9631C2.96984 9.83553 3.8847 8.92069 5.01227 8.92069C5.23422 8.92069 5.44781 8.95603 5.64797 9.01891V6.56634C5.44094 6.53969 5.22969 6.52444 5.01227 6.52444C2.56406 6.52444 0.572266 8.51591 0.572266 10.9641C0.572266 13.4123 2.56406 15.4041 5.01227 15.4041C7.46047 15.4041 9.45194 13.4123 9.45194 10.9641V5.66166C10.3697 6.33009 11.4952 6.72694 12.7127 6.72694H13.1875V4.33034C13.1402 4.33034 13.0916 4.33034 13.0457 3.58156Z" fill="#010101" />
+              <path d="M12.7127 4.33034V6.72694C11.4952 6.72694 10.3697 6.33009 9.45194 5.66166V10.9641C9.45194 13.4123 7.46047 15.4041 5.01227 15.4041C2.56406 15.4041 0.572266 13.4123 0.572266 10.9641C0.572266 8.51591 2.56406 6.52444 5.01227 6.52444C5.22969 6.52444 5.44094 6.53969 5.64797 6.56634V9.01891C5.44781 8.95603 5.23422 8.92069 5.01227 8.92069C3.8847 8.92069 2.96984 9.83553 2.96984 10.9631C2.96984 12.0907 3.8847 13.0056 5.01227 13.0056C6.13984 13.0056 7.05469 12.0907 7.05469 10.9631V0.548828H9.45194C9.61441 1.45706 10.1042 2.24997 10.8064 2.80253C11.4221 3.2897 12.2006 3.58156 13.0457 3.58156L12.7127 4.33034Z" fill="#EE1D52" />
+              <path d="M9.45194 5.66166C10.3697 6.33009 11.4952 6.72694 12.7127 6.72694V4.33034C12.0105 4.33034 11.3604 4.10969 10.8064 3.73691C10.1042 3.18434 9.61441 2.39144 9.45194 1.48319V0.548828H7.05469V10.9631C7.05469 12.0907 6.13984 13.0056 5.01227 13.0056C3.8847 13.0056 2.96984 12.0907 2.96984 10.9631C2.96984 9.83553 3.8847 8.92069 5.01227 8.92069C5.23422 8.92069 5.44781 8.95603 5.64797 9.01891V6.56634C5.44094 6.53969 5.22969 6.52444 5.01227 6.52444C2.56406 6.52444 0.572266 8.51591 0.572266 10.9641C0.572266 13.4123 2.56406 15.4041 5.01227 15.4041C7.46047 15.4041 9.45194 13.4123 9.45194 10.9641V5.66166Z" fill="#69C9D0" />
             </svg>
             <Typography variant="body1" sx={{ color: "text.secondary" }}>
               Watch a real day in the life
             </Typography>
           </Box>
         </AccordionSummary>
-        <Divider />
         <AccordionDetails sx={{ px: 2, py: 2 }}>
           <Box
             sx={{
@@ -290,6 +232,11 @@ const MatchMeResults = () => {
   const [mobileCardIndex, setMobileCardIndex] = useState(0);
   const [cardStatuses, setCardStatuses] = useState<Record<number, CardStatus>>({});
   const [headerCollapsed, setHeaderCollapsed] = useState(false);
+  const [stripDragOffset, setStripDragOffset] = useState(0);
+  const stripDragStart = useRef(0);
+  const MOBILE_THRESHOLD = 80;
+  const [inlineCtasState, setInlineCtasState] = useState<"below" | "visible" | "above">("below");
+  const inlineCtasRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const career = CAREERS[currentCard % CAREERS.length];
@@ -304,11 +251,40 @@ const MatchMeResults = () => {
   const handleMobileNext = () => setMobileCardIndex((i) => Math.min(i + 1, CAREERS.length - 1));
   const handleMobilePrev = () => setMobileCardIndex((i) => Math.max(i - 1, 0));
 
+  const onStripTouchStart = (e: React.TouchEvent) => {
+    stripDragStart.current = e.touches[0].clientX;
+  };
+  const onStripTouchMove = (e: React.TouchEvent) => {
+    setStripDragOffset(e.touches[0].clientX - stripDragStart.current);
+  };
+  const onStripTouchEnd = () => {
+    if (stripDragOffset < -MOBILE_THRESHOLD) handleMobileNext();
+    else if (stripDragOffset > MOBILE_THRESHOLD) handleMobilePrev();
+    setStripDragOffset(0);
+  };
+
   useEffect(() => {
     if (!isMobile) return;
     const handleScroll = () => setHeaderCollapsed(window.scrollY > 80);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, [isMobile]);
+
+  useEffect(() => {
+    const el = inlineCtasRef.current;
+    if (!el || !isMobile) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInlineCtasState("visible");
+        } else {
+          setInlineCtasState(entry.boundingClientRect.top < 0 ? "above" : "below");
+        }
+      },
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
   }, [isMobile]);
 
   return (
@@ -366,23 +342,16 @@ const MatchMeResults = () => {
         </Box>
 
         {/* Title + subtitle — collapses after scroll */}
-        <Box
-          sx={{
-            px: 2,
-            pb: 3,
-            overflow: "hidden",
-            transition: "opacity 0.3s ease, max-height 0.4s ease",
-            opacity: headerCollapsed ? 0 : 1,
-            maxHeight: headerCollapsed ? 0 : 200,
-          }}
-        >
-          <Typography variant="h4" sx={{ color: "text.primary", textAlign: "center", mb: 1 }}>
-            Your Personalized Career Matches
-          </Typography>
-          <Typography variant="body1" sx={{ color: "text.secondary", textAlign: "center" }}>
-            Everything you told us, translated into real careers we think you'll love
-          </Typography>
-        </Box>
+        <Collapse in={!headerCollapsed} timeout={350}>
+          <Box sx={{ px: 2, pb: 3 }}>
+            <Typography variant="h4" sx={{ color: "text.primary", textAlign: "center", mb: 1 }}>
+              Your Personalized Matches
+            </Typography>
+            <Typography variant="body1" sx={{ color: "text.secondary", textAlign: "center" }}>
+              Here are 25 real careers we think you'll love
+            </Typography>
+          </Box>
+        </Collapse>
 
         {/* Sticky match count + progress */}
         <Box
@@ -399,12 +368,6 @@ const MatchMeResults = () => {
             gap: 2,
           }}
         >
-          <Typography variant="overline" sx={{ letterSpacing: "1px", fontSize: 12 }}>
-            matches viewed:{" "}
-            <Box component="span" sx={{ color: "primary.main" }}>{currentCard + 1}</Box>
-            {" of "}
-            <Box component="span" sx={{ color: "primary.main" }}>{TOTAL}</Box>
-          </Typography>
           <LinearProgress
             variant="determinate"
             value={progress}
@@ -596,9 +559,9 @@ const MatchMeResults = () => {
             >
               <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
                 <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M13.0457 3.58156C12.2006 3.58156 11.4221 3.2897 10.8064 2.80253C10.1042 2.24997 9.61441 1.45706 9.45194 0.548828H7.05469V10.9631C7.05469 12.0907 6.13984 13.0056 5.01227 13.0056C3.8847 13.0056 2.96984 12.0907 2.96984 10.9631C2.96984 9.83553 3.8847 8.92069 5.01227 8.92069C5.23422 8.92069 5.44781 8.95603 5.64797 9.01891V6.56634C5.44094 6.53969 5.22969 6.52444 5.01227 6.52444C2.56406 6.52444 0.572266 8.51591 0.572266 10.9641C0.572266 13.4123 2.56406 15.4041 5.01227 15.4041C7.46047 15.4041 9.45194 13.4123 9.45194 10.9641V5.66166C10.3697 6.33009 11.4952 6.72694 12.7127 6.72694H13.1875V4.33034C13.1402 4.33034 13.0916 4.33034 13.0457 3.58156Z" fill="#010101"/>
-                  <path d="M12.7127 4.33034V6.72694C11.4952 6.72694 10.3697 6.33009 9.45194 5.66166V10.9641C9.45194 13.4123 7.46047 15.4041 5.01227 15.4041C2.56406 15.4041 0.572266 13.4123 0.572266 10.9641C0.572266 8.51591 2.56406 6.52444 5.01227 6.52444C5.22969 6.52444 5.44094 6.53969 5.64797 6.56634V9.01891C5.44781 8.95603 5.23422 8.92069 5.01227 8.92069C3.8847 8.92069 2.96984 9.83553 2.96984 10.9631C2.96984 12.0907 3.8847 13.0056 5.01227 13.0056C6.13984 13.0056 7.05469 12.0907 7.05469 10.9631V0.548828H9.45194C9.61441 1.45706 10.1042 2.24997 10.8064 2.80253C11.4221 3.2897 12.2006 3.58156 13.0457 3.58156L12.7127 4.33034Z" fill="#EE1D52"/>
-                  <path d="M9.45194 5.66166C10.3697 6.33009 11.4952 6.72694 12.7127 6.72694V4.33034C12.0105 4.33034 11.3604 4.10969 10.8064 3.73691C10.1042 3.18434 9.61441 2.39144 9.45194 1.48319V0.548828H7.05469V10.9631C7.05469 12.0907 6.13984 13.0056 5.01227 13.0056C3.8847 13.0056 2.96984 12.0907 2.96984 10.9631C2.96984 9.83553 3.8847 8.92069 5.01227 8.92069C5.23422 8.92069 5.44781 8.95603 5.64797 9.01891V6.56634C5.44094 6.53969 5.22969 6.52444 5.01227 6.52444C2.56406 6.52444 0.572266 8.51591 0.572266 10.9641C0.572266 13.4123 2.56406 15.4041 5.01227 15.4041C7.46047 15.4041 9.45194 13.4123 9.45194 10.9641V5.66166Z" fill="#69C9D0"/>
+                  <path d="M13.0457 3.58156C12.2006 3.58156 11.4221 3.2897 10.8064 2.80253C10.1042 2.24997 9.61441 1.45706 9.45194 0.548828H7.05469V10.9631C7.05469 12.0907 6.13984 13.0056 5.01227 13.0056C3.8847 13.0056 2.96984 12.0907 2.96984 10.9631C2.96984 9.83553 3.8847 8.92069 5.01227 8.92069C5.23422 8.92069 5.44781 8.95603 5.64797 9.01891V6.56634C5.44094 6.53969 5.22969 6.52444 5.01227 6.52444C2.56406 6.52444 0.572266 8.51591 0.572266 10.9641C0.572266 13.4123 2.56406 15.4041 5.01227 15.4041C7.46047 15.4041 9.45194 13.4123 9.45194 10.9641V5.66166C10.3697 6.33009 11.4952 6.72694 12.7127 6.72694H13.1875V4.33034C13.1402 4.33034 13.0916 4.33034 13.0457 3.58156Z" fill="#010101" />
+                  <path d="M12.7127 4.33034V6.72694C11.4952 6.72694 10.3697 6.33009 9.45194 5.66166V10.9641C9.45194 13.4123 7.46047 15.4041 5.01227 15.4041C2.56406 15.4041 0.572266 13.4123 0.572266 10.9641C0.572266 8.51591 2.56406 6.52444 5.01227 6.52444C5.22969 6.52444 5.44094 6.53969 5.64797 6.56634V9.01891C5.44781 8.95603 5.23422 8.92069 5.01227 8.92069C3.8847 8.92069 2.96984 9.83553 2.96984 10.9631C2.96984 12.0907 3.8847 13.0056 5.01227 13.0056C6.13984 13.0056 7.05469 12.0907 7.05469 10.9631V0.548828H9.45194C9.61441 1.45706 10.1042 2.24997 10.8064 2.80253C11.4221 3.2897 12.2006 3.58156 13.0457 3.58156L12.7127 4.33034Z" fill="#EE1D52" />
+                  <path d="M9.45194 5.66166C10.3697 6.33009 11.4952 6.72694 12.7127 6.72694V4.33034C12.0105 4.33034 11.3604 4.10969 10.8064 3.73691C10.1042 3.18434 9.61441 2.39144 9.45194 1.48319V0.548828H7.05469V10.9631C7.05469 12.0907 6.13984 13.0056 5.01227 13.0056C3.8847 13.0056 2.96984 12.0907 2.96984 10.9631C2.96984 9.83553 3.8847 8.92069 5.01227 8.92069C5.23422 8.92069 5.44781 8.95603 5.64797 9.01891V6.56634C5.44094 6.53969 5.22969 6.52444 5.01227 6.52444C2.56406 6.52444 0.572266 8.51591 0.572266 10.9641C0.572266 13.4123 2.56406 15.4041 5.01227 15.4041C7.46047 15.4041 9.45194 13.4123 9.45194 10.9641V5.66166Z" fill="#69C9D0" />
                 </svg>
                 <Typography variant="subtitle2" sx={{ color: "text.secondary", fontWeight: 500 }}>
                   Watch a real day in the life
@@ -643,22 +606,73 @@ const MatchMeResults = () => {
         </Box>
       </Box>
 
-      {/* ── Mobile Card ───────────────────────────────────────────────── */}
+      {/* ── Mobile Card Slideshow ─────────────────────────────────────── */}
       <Box
         sx={{
-          display: { xs: "flex", md: "none" },
-          justifyContent: "center",
+          display: { xs: "block", md: "none" },
+          overflow: "hidden",
           px: 2,
           py: 2,
-          overflow: "hidden",
         }}
       >
-        <MobileCareerCard
-          key={mobileCardIndex}
-          career={CAREERS[mobileCardIndex]}
-          onNext={handleMobileNext}
-          onPrev={handleMobilePrev}
-        />
+        <Box
+          onTouchStart={onStripTouchStart}
+          onTouchMove={onStripTouchMove}
+          onTouchEnd={onStripTouchEnd}
+          sx={{
+            display: "flex",
+            gap: "12px",
+            transform: `translateX(calc(-${mobileCardIndex} * (100vw - 56px) + ${stripDragOffset}px))`,
+            transition: stripDragOffset !== 0 ? "none" : "transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+            touchAction: "pan-y",
+            userSelect: "none",
+            willChange: "transform",
+          }}
+        >
+          {CAREERS.map((c, i) => (
+            <MobileCareerCard key={i} career={c} />
+          ))}
+        </Box>
+      </Box>
+
+      {/* ── Mobile Inline CTAs (fades in when scrolled into view) ─────── */}
+      <Box
+        ref={inlineCtasRef}
+        sx={{
+          display: { xs: "flex", md: "none" },
+          px: 1,
+          pt: 0,
+          pb: 2,
+          gap: 2,
+          opacity: inlineCtasState !== "below" ? 1 : 0,
+          pointerEvents: inlineCtasState !== "below" ? "auto" : "none",
+          transition: "opacity 0.35s ease",
+        }}
+      >
+        <Button
+          variant="contained"
+          color={cardStatuses[mobileCardIndex] === "saved" ? "success" : "primary"}
+          fullWidth
+          startIcon={cardStatuses[mobileCardIndex] === "saved" ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+          onClick={() => toggleStatus(mobileCardIndex, "saved")}
+          sx={{ textTransform: "uppercase" }}
+        >
+          {cardStatuses[mobileCardIndex] === "saved" ? "Saved" : "Save"}
+        </Button>
+        <Button
+          variant="outlined"
+          fullWidth
+          startIcon={<CloseIcon />}
+          onClick={() => toggleStatus(mobileCardIndex, "dismissed")}
+          sx={{
+            textTransform: "uppercase",
+            color: cardStatuses[mobileCardIndex] === "dismissed" ? "error.main" : "#454771",
+            borderColor: cardStatuses[mobileCardIndex] === "dismissed" ? "error.main" : "rgba(35,37,85,0.5)",
+            "&:hover": { borderColor: cardStatuses[mobileCardIndex] === "dismissed" ? "error.main" : "#454771", bgcolor: "transparent" },
+          }}
+        >
+          Not for me
+        </Button>
       </Box>
 
       {/* ── "Explore Beyond" Section ──────────────────────────────────── */}
@@ -691,7 +705,7 @@ const MatchMeResults = () => {
         </Box>
       </Box>
 
-      {/* ── Mobile Anchored CTAs ──────────────────────────────────────── */}
+      {/* ── Mobile Anchored CTAs (fixed, fades out once inline CTAs come into view) ── */}
       <Box
         sx={{
           display: { xs: "flex", md: "none" },
@@ -700,10 +714,14 @@ const MatchMeResults = () => {
           left: 0,
           right: 0,
           px: 1,
-          py: 2,
+          pt: 5,
+          pb: 2,
           gap: 2,
-          background: "linear-gradient(to bottom, rgba(255,255,255,0) 0%, white 30%)",
+          background: "linear-gradient(to bottom, rgba(255,255,255,0) 0%, white 40%)",
           zIndex: 100,
+          opacity: inlineCtasState === "below" ? 1 : 0,
+          pointerEvents: inlineCtasState === "below" ? "auto" : "none",
+          transition: "opacity 0.35s ease",
         }}
       >
         <Button
