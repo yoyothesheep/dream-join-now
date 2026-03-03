@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { Box, Typography, Button, Collapse } from "@mui/material";
+import { Box, Typography, Button, Skeleton } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const THINKING_LINES = [
   "Scanning your quiz responses for career value signals...",
@@ -71,27 +70,32 @@ const ThinkingLogo = ({ isThinking }: { isThinking: boolean }) => (
 
 
 const FindingCareers = () => {
-  const [thinkingOpen, setThinkingOpen] = useState(true);
   const [isDone, setIsDone] = useState(false);
+  const [started, setStarted] = useState(false);
   const [lineIndex, setLineIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   // Which insight to show: 0→1→2 as lineIndex advances
   const insightIndex = Math.min(Math.floor(lineIndex / 2), INSIGHTS.length - 1);
 
-  const headerLabel =
-    isDone
-      ? `Thought for ${elapsedSeconds}s`
+  const headerLabel = isDone
+    ? "Your Careers Are Ready"
+    : !started
+      ? "Thinking\u2026"
       : HEADER_LABELS[Math.min(lineIndex, THINKING_LINES.length - 1)];
+
+  // Initial delay before streaming begins
+  useEffect(() => {
+    const timer = setTimeout(() => setStarted(true), 1200);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Character-by-character streaming
   useEffect(() => {
-    if (isDone) return;
+    if (!started || isDone) return;
     if (lineIndex >= THINKING_LINES.length) {
       const timer = setTimeout(() => {
         setIsDone(true);
-        setThinkingOpen(false);
       }, 400);
       return () => clearTimeout(timer);
     }
@@ -109,14 +113,7 @@ const FindingCareers = () => {
       }, 350);
       return () => clearTimeout(timer);
     }
-  }, [lineIndex, charIndex, isDone]);
-
-  // Elapsed seconds counter
-  useEffect(() => {
-    if (isDone) return;
-    const timer = setInterval(() => setElapsedSeconds((s) => s + 1), 1000);
-    return () => clearInterval(timer);
-  }, [isDone]);
+  }, [lineIndex, charIndex, isDone, started]);
 
   return (
     <Box
@@ -156,53 +153,61 @@ const FindingCareers = () => {
           }}
         >
           <Box
-            onClick={() => setThinkingOpen((o) => !o)}
             sx={{
               display: "flex",
               alignItems: "center",
               gap: 1.5,
               px: 2,
               py: 1.5,
-              cursor: "pointer",
-              userSelect: "none",
             }}
           >
             <ThinkingLogo isThinking={!isDone} />
             <Typography variant="body2" sx={{ flex: 1, color: "text.primary", fontWeight: 500 }}>
               {headerLabel}
             </Typography>
-            <ExpandMoreIcon
-              sx={{
-                color: "text.disabled",
-                fontSize: 18,
-                transform: thinkingOpen ? "rotate(180deg)" : "rotate(0deg)",
-                transition: "transform 0.3s ease",
-              }}
-            />
           </Box>
 
-          <Collapse in={thinkingOpen}>
-            <Box
-              sx={{
-                borderTop: "1px solid",
-                borderColor: "divider",
-                px: 2,
-                pt: 1.5,
-                pb: 2,
-              }}
-            >
+          <Box
+            sx={{
+              borderTop: "1px solid",
+              borderColor: "divider",
+              px: 2,
+              pt: 1.5,
+              pb: 2,
+            }}
+          >
               <Box sx={{ position: "relative", minHeight: 80 }}>
+                {/* Skeleton — shown before streaming starts */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 0, left: 0, right: 0,
+                    opacity: started ? 0 : 1,
+                    transition: "opacity 0.4s ease",
+                    pointerEvents: started ? "none" : "auto",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 1,
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Skeleton variant="circular" width={14} height={14} />
+                    <Skeleton variant="text" width={130} height={14} />
+                  </Box>
+                  <Skeleton variant="text" width="100%" height={12} />
+                  <Skeleton variant="text" width="72%" height={12} />
+                </Box>
+
+                {/* Insight cards — shown once streaming starts, hidden when done */}
                 {INSIGHTS.map((insight, i) => (
                   <Box
                     key={i}
                     sx={{
                       position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      opacity: insightIndex === i ? 1 : 0,
+                      top: 0, left: 0, right: 0,
+                      opacity: started && !isDone && insightIndex === i ? 1 : 0,
                       transition: "opacity 0.4s ease",
-                      pointerEvents: insightIndex === i ? "auto" : "none",
+                      pointerEvents: started && !isDone && insightIndex === i ? "auto" : "none",
                     }}
                   >
                     <Typography variant="overline" sx={{ fontWeight: 600, color: "text.primary", display: "block", lineHeight: 2 }}>
@@ -213,9 +218,26 @@ const FindingCareers = () => {
                     </Typography>
                   </Box>
                 ))}
+
+                {/* Celebratory state — shown when done */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 0, left: 0, right: 0,
+                    opacity: isDone ? 1 : 0,
+                    transition: "opacity 0.6s ease",
+                    pointerEvents: isDone ? "auto" : "none",
+                  }}
+                >
+                  <Typography variant="overline" sx={{ fontWeight: 600, color: "primary.main", display: "block", lineHeight: 2 }}>
+                    🎉 25 careers matched
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.7 }}>
+                    We found roles aligned with your values, strengths, and growth goals — with funding and training paths included.
+                  </Typography>
+                </Box>
               </Box>
             </Box>
-          </Collapse>
         </Box>
 
         {/* Match Me Feature Card */}
