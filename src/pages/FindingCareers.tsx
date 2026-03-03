@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, Typography, Button, Collapse, Fade } from "@mui/material";
+import { Box, Typography, Button, Collapse } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -191,9 +191,20 @@ const FindingCareers = () => {
                 pb: 2,
               }}
             >
-              {INSIGHTS.map((insight, i) => (
-                <Fade key={i} in={insightIndex === i} unmountOnExit>
-                  <Box>
+              <Box sx={{ position: "relative", minHeight: 80 }}>
+                {INSIGHTS.map((insight, i) => (
+                  <Box
+                    key={i}
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      opacity: insightIndex === i ? 1 : 0,
+                      transition: "opacity 0.4s ease",
+                      pointerEvents: insightIndex === i ? "auto" : "none",
+                    }}
+                  >
                     <Typography variant="overline" sx={{ fontWeight: 600, color: "text.primary", display: "block", lineHeight: 2 }}>
                       {insight.emoji} {insight.title}
                     </Typography>
@@ -201,8 +212,8 @@ const FindingCareers = () => {
                       {insight.description}
                     </Typography>
                   </Box>
-                </Fade>
-              ))}
+                ))}
+              </Box>
             </Box>
           </Collapse>
         </Box>
